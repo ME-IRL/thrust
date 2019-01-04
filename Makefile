@@ -25,5 +25,5 @@ clean:
 test:
 	tools/upload
 
-burn: $(PROGRAM).hex
+burn: $(TARGET).hex
 	tools/upload $<
