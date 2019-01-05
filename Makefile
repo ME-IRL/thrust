@@ -2,26 +2,33 @@ TARGET = thrust
 
 MCU = atmega32u4
 F_CPU = 16000000
+F_USB = $(F_CPU)
+ARCH = AVR8
+OPTIMIZATION = s
 
 SRC_DIR = src
-SRC  := $(wildcard $(SRC_DIR)/*.cpp)
-OBJ  := $(SRC:%.cpp=%.o)
+SRC = $(wildcard $(SRC_DIR)/*.c) $(LUFA_SRC_USB) $(LUFA_SRC_USBCLASS) $(LUFA_SRC_PLATFORM)
 
-CFLAGS = -Wall -g -Os -mmcu=$(MCU) -DF_CPU=$(F_CPU) -I include
+LUFA_PATH = lufa/LUFA
 
-all: $(TARGET).hex
+#CC_FLAGS = -DUSE_LUFA_CONFIG_HEADER -IConfig
+CC_FLAGS = 
+LD_FLAGS = 
 
-%.hex: %.elf
-	avr-objcopy -O ihex $< $@
+all:
 
-%.elf: $(OBJ)
-	avr-g++ $(CFLAGS) -o $@ $^
+include $(LUFA_PATH)/Build/lufa_core.mk
+include $(LUFA_PATH)/Build/lufa_sources.mk
+include $(LUFA_PATH)/Build/lufa_build.mk
+include $(LUFA_PATH)/Build/lufa_cppcheck.mk
+include $(LUFA_PATH)/Build/lufa_doxygen.mk
+include $(LUFA_PATH)/Build/lufa_dfu.mk
+include $(LUFA_PATH)/Build/lufa_hid.mk
+include $(LUFA_PATH)/Build/lufa_avrdude.mk
+include $(LUFA_PATH)/Build/lufa_atprogram.mk
 
-%.o: %.cpp
-	avr-g++ $(CFLAGS) -o $@ -c $<
-
-clean:
-	rm -rf $(OBJ) $(TARGET).hex
+#clean:
+#	rm -rf $(OBJ) $(TARGET).hex
 
 reset:
 	tools/reset.sh
