@@ -9,7 +9,7 @@ void setup(){
   Serial.begin(9600);
   while(!Serial);
   
-  sdInit(4);
+  sdInit(18);
   //sdGetRoot();
   thrustData = sdCreateFile("thrustData");
   sdWriteInfo(thrustData);
@@ -58,9 +58,9 @@ File sdCreateFile(String fn){
     e = true;
     nfn = fn+count++;
   }
-  nfn+=".txt";
 
-  File f = SD.open(nfn.c_str(), FILE_WRITE);
+  //File f = SD.open(nfn.c_str(), FILE_WRITE);
+  File f = SD.open("test", FILE_WRITE);
   if(!f){
     Serial.println("Failed!");
     error();
@@ -90,7 +90,7 @@ void sdInit(short cs){
 }
 
 void error(){
-  return;
+  //return;
   while(1);
 }
 

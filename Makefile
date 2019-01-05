@@ -1,12 +1,13 @@
-DEVICE = atmega32u4
 TARGET = thrust
-CLOCK = 8000000
+
+MCU = atmega32u4
+F_CPU = 16000000
 
 SRC_DIR = src
 SRC  := $(wildcard $(SRC_DIR)/*.cpp)
 OBJ  := $(SRC:%.cpp=%.o)
 
-CFLAGS = -Wall -g -Os -mmcu=$(DEVICE) -DF_CPU=$(CLOCK) -I include
+CFLAGS = -Wall -g -Os -mmcu=$(MCU) -DF_CPU=$(F_CPU) -I include
 
 all: $(TARGET).hex
 
@@ -21,6 +22,9 @@ all: $(TARGET).hex
 
 clean:
 	rm -rf $(OBJ) $(TARGET).hex
+
+reset:
+	tools/reset.sh
 
 test:
 	tools/upload
