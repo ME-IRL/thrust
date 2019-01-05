@@ -11,7 +11,7 @@ void setup(){
   
   sdInit(18);
   //sdGetRoot();
-  thrustData = sdCreateFile("thrustData");
+  thrustData = sdCreateFile("data");
   sdWriteInfo(thrustData);
   
   running = true;
@@ -53,14 +53,13 @@ File sdCreateFile(String fn){
   boolean e = false;
   String nfn = fn+".txt";
   int count = 1;
-  //while(SD.exists(nfn.c_str())){
-  while(count < 5){
+  while(SD.exists(nfn.c_str())){
     e = true;
     nfn = fn+count++;
+    nfn += ".txt";
   }
 
-  //File f = SD.open(nfn.c_str(), FILE_WRITE);
-  File f = SD.open("test", FILE_WRITE);
+  File f = SD.open(nfn.c_str(), FILE_WRITE);
   if(!f){
     Serial.println("Failed!");
     error();
