@@ -27,7 +27,7 @@ reset:
 	tools/reset.sh
 
 test:
-	arduino --upload others/test/test.ino --port /dev/ttyACM0 --board arduino:avr:micro #--verbose-upload #-v
+	arduino --upload others/test/test.ino --port /dev/ttyACM0 --board arduino:avr:micro && cat /dev/ttyACM0
 
 upload:
 	tools/upload
