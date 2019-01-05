@@ -27,6 +27,9 @@ reset:
 	tools/reset.sh
 
 test:
+	arduino --upload others/test/test.ino --port /dev/ttyACM0 --board arduino:avr:micro #--verbose-upload #-v
+
+upload:
 	tools/upload
 
 burn: $(TARGET).hex
