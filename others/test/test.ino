@@ -1,5 +1,10 @@
 #include <SPI.h>
 #include <SD.h>
+#include "HX711.h"
+
+#define __calibration -7050.0 // Configure this
+#define HX711_DATA 4
+#define HX711_CLK 5
 
 #define SD_CS 18
 
@@ -14,18 +19,21 @@ void setup(){
 	thrustData = sdCreateFile("data");
 	sdWriteInfo(thrustData);
 
+	Serial.println("Initializing HX711 scale...");
+	HX711 scale(HX711_DATA, HX711_CLK);
+	scale.set_scale(__calibration);
+	scale.tare();
+
 	running = true;
-	println("Index,MS,data,atad,test");
+	println("Index,MS,thrustVal");
 	for(int dpoint = 1; running; dpoint++){
 		String dataString = String(dpoint)+","+millis();
 
 		// Append data
-		dataString += ","+String(5);
-		dataString += ","+String(5);
-		dataString += ","+String(1234.343);
+		dataString += ","+String(scale.get_units());
 
 		println(dataString);
-		if(dpoint == 100) running = false;
+		//if(dpoint == 1) running = false;
 	}
 
 	thrustData.close();
