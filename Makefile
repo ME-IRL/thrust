@@ -15,6 +15,10 @@ LUFA_PATH = ../lufa/LUFA
 CC_FLAGS = -I $(INC_DIR) # -DUSE_LUFA_CONFIG -IConfig
 LD_FLAGS = 
 
+AVRDUDE_PROGRAMMER = avrisp
+AVRDUDE_PORT = /dev/ttyACM0
+AVRDUDE_FLAGS = -b 19200
+
 all:
 
 include $(LUFA_PATH)/Build/lufa_core.mk
