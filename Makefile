@@ -34,7 +34,7 @@ reset:
 	tools/reset.sh
 
 test:
-	arduino --upload others/test/test.ino --port /dev/ttyACM0 --board arduino:avr:micro #--verbose-upload #-v
+	arduino --upload others/test/test.ino --port /dev/ttyACM0 --board arduino:avr:micro --pref compiler.cpp.extra_flags="-save-temps" --pref compiler.c.extra_flags="-save-temps" #--verbose-upload #-v
 
 upload:
 	tools/upload

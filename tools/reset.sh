@@ -6,5 +6,5 @@ while :; do
 done
 
 echo Uploading
-tools/upload empty.hex
+tools/upload tools/empty.hex
 #/home/brian/Downloads/arduino-1.8.8/arduino --upload empty.ino

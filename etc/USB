@@ -1,0 +1,31 @@
+ARDUINO_HOME/hardware/arduino/avr/cores/arduino/main.cpp
+
+In main():
+ init()
+ initVariant()
+ USBDevice.attach()
+  /opt/arduino-1.8.8/hardware/arduino/avr/cores/arduino/USBCore.c: line 810
+
+  voltile u8 _usbConfiguration = 0;
+  voltile u8 _usbCurrentStatus = 0;
+  voltile u8 _usbSuspendState = 0;
+
+  USBDevice_::attach(){
+   _usbConfiguration = 0;
+   _usbCurrentStatus = 0;
+   _usbSuspendState = 0;
+   USB_ClockEnable();
+
+   UDINT &= ~((1<<WAKEUPI) | (1<<SUSPI)); // clear already pending WAKEUP / SUSPEND requests
+   UDIEN = (1<<EORSTE) | (1<<SOFE) | (1<<SUSPE);   // Enable interrupts for EOR (End of Reset), SOF (start of frame) and SUSPEND
+
+   TX_RX_LED_INIT; // in arduino/hardware/arduino/avr/variants/micro/pins_arduino.h:35 :: DDRD |= (1<<5), DDRB |= (1<<0), TXLED0, RXLED0
+    #define TXLED0 PORTD &= ~(1<<5)
+    #define TXLED1 PORTD |= (1<<5)
+    #define RXLED0 PORTB &= ~(1<<0)
+	#define RXLED1 PORTB |= (1<<0)
+  }
+setup()
+for(;;)
+ loop()
+ if (serialEventRun) serialEventRun()

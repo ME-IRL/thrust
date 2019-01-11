@@ -2,33 +2,40 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
-#include <LUFA/Common/Common.h>
-#include <LUFA/Drivers/USB/USB.h>
-
-uint32_t Boot_Key ATTR_NO_INIT;
-
-#define MAGIC_BOOT_KEY 0xDEADBEEF
-#define BOOTLOADER_START_ADDRESS (0x8000 - 0x1000)
-
-void Bootloader_Jump_Check(void) ATTR_INIT_SECTION(3);
-void Bootloader_Jump_Check(void){
-	if((MCUSR & (1<<WDRF)) && (Boot_Key == MAGIC_BOOT_KEY)){
-		Boot_Key = 0;
-		((void (*)(void))BOOTLOADER_START_ADDRESS)();
-	}
+// See wiring.c
+void init(){
+	sei();
+	sbi(TCCR0A, WGM01);
+	sbi(TCCR0A, WGM00);
+	sbi(TCCR0B, CS01);
+	sbi(TCCR0B, CS00);
+	sbi(TIMSK0, TOIE0);
+	TCCR1B = 0;
+	sbi(TCCR1B, CS11);
+	sbi(TCCR1B, CS10);
+	sbi(TCCR1A, WGM10);
+	sbi(TCCR3B, CS31);
+	sbi(TCCR3B, CS30);
+	sbi(TCCR3A, WGM30);
+	sbi(TCCR4B, CS42);
+	sbi(TCCR4B, CS41);
+	sbi(TCCR4B, CS40);
+	sbi(TCCR4D, WGM40);
+	sbi(TCCR4A, PWM4A);
+	sbi(TCCR4C, PWM4D);
+	sbi(ADCSRA, ADPS2);
+	sbi(ADCSRA, ADPS1);
+	sbi(ADCSRA, ADPS0);
+	sbi(ADCSRA, ADEN);
 }
 
-void Jump_To_Bootloader(void){
-	//USB_DISABLE();
-	cli();
-	Delay_MS(2000);
-	Boot_Key = MAGIC_BOOT_KEY;
-	wdt_enable(WDTO_250MS);
-	for(;;);
+void initVariant(){
+	
 }
 
 int main(){
-	USB_Init();
+	init();
+	initVariant();
 
 	DDRB = _BV(PB0); // Pro Micro TX LED
 

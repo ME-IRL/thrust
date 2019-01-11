@@ -1,0 +1,72 @@
+
+USB_ClassInfo_CDC_Device_t VirtualSerial_CDC_Interface = {
+	.Config = {
+		.ControlInterfaceNumber = INTERFACE_ID_CDC_CCI,
+		.DataINEndpoint	= {
+			.Address = CDC_TX_EPADDR,
+			.Size = CDC_TXRX_EPSIZE,
+			.Banks = 1,
+		},
+		.DataOUTEndpoint = {
+			.Address = CDC_RX_EPADDR,
+			.Size = CDC_TXRX_EPSIZE,
+			.Banks = 1,
+		},
+		.NotificationEndpoint = {
+			.Address = CDC_NOTIFICATION_EPADDR,
+			.Size = CDC_NOTIFICATION_EPSIZE,
+			.Banks = 1,
+		},
+	},
+};
+
+static FILE USBSerialStream;
+
+main:
+	// Hardware setup
+	/// Disable wdt
+	MCUSR &= ~(1 << WDRF) // Zeroes out watchdog reset flag
+	wdt_disable(); // included in avr/wdt.h
+	/// Disable clock division
+	clock_prescale_set(clock_div_1); // included in avr/power.h
+	/// Other hardware
+	//// like LEDs
+	LEDs_Init(); // Look at LUFA/Drivers/Board/AVR8/MICRO/LEDs.h
+	//// or USB
+	USB_Init();
+
+	// Create USB Stream
+	CDC_Device_CreateStream(&VirtualSerial_CDC_Interface, &USBSerialStream);
+
+	// LED funk
+	/// Set to NOTREADY (LED1)
+
+	// Enable Interrupts
+	GlobalInterruptEnable();
+
+	for(;;){
+		fputs("Test\r\n", &USBSerialStream);
+
+		// Empty read buffer
+		CDC_Device_ReceiveByte(&VirtualSerial_CDC_Interface);
+
+		CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
+		USB_USBTask();
+	}
+
+Connect:
+	/// Set to ENUMERATING (LED2 | LED3)
+
+Disconnect:
+	/// Set to NOTREADY (LED1)
+
+ConfigChanged:
+	ConfigSuccess &= CDC_Device_ConfigureEndpoints(&VirtualSerial_CDC_Interface);
+	/// Set to READY (LED2 | LED4) if success
+	/// Set to ERROR (LED1 | LED3) if fail
+
+ControlRequest:
+	CDC_Device_ProcessControlRequest(&VirtualSerial_CDC_Interface);
+
+ControlLineStateChanged:
+	// blah
