@@ -1,33 +1,41 @@
-TARGET = thrust
+TARGET       = thrust
 
-MCU = atmega32u4
-BOARD = USER
-F_CPU = 16000000
-F_USB = $(F_CPU)
-ARCH = AVR8
+MCU          = atmega32u4
+BOARD        = USER
+F_CPU        = 16000000
+F_USB        = $(F_CPU)
+ARCH         = AVR8
 OPTIMIZATION = s
 
-SRC_DIR = src
-INC_DIR = include
+SRC_DIR      = src
+INC_DIR      = include
 
-SRC  = $(wildcard $(SRC_DIR)/*.c) $(LUFA_SRC_USB) $(LUFA_SRC_USBCLASS) # $(LUFA_SRC_PLATFORM)
-LUFA_PATH = ../lufa/LUFA
+SRC          = $(wildcard $(SRC_DIR)/*.c) $(LUFA_SRC_USB) $(LUFA_SRC_USBCLASS) $(LUFA_SRC_PLATFORM)
+LUFA_PATH    = ../lufa/LUFA
 
-CC_FLAGS = -I $(INC_DIR) -DUSE_LUFA_CONFIG_HEADER -IConfig # --save-temps
-LD_FLAGS = 
+CC_FLAGS     = -DUSE_LUFA_CONFIG_HEADER -IConfig -Iinclude
+LD_FLAGS     =
 
 AVRDUDE_PROGRAMMER = avrisp
+AVRDUDE_PORT = /dev/arduino0
 AVRDUDE_PORT = /dev/ttyACM0
 AVRDUDE_FLAGS = -b 19200
 
+# Default target
 all:
 
-include $(LUFA_PATH)/Build/lufa_core.mk
-include $(LUFA_PATH)/Build/lufa_sources.mk
-include $(LUFA_PATH)/Build/lufa_build.mk
-include $(LUFA_PATH)/Build/lufa_cppcheck.mk
-include $(LUFA_PATH)/Build/lufa_doxygen.mk
-include $(LUFA_PATH)/Build/lufa_dfu.mk
-include $(LUFA_PATH)/Build/lufa_hid.mk
-include $(LUFA_PATH)/Build/lufa_avrdude.mk
-include $(LUFA_PATH)/Build/lufa_atprogram.mk
+# Include LUFA-specific DMBS extension modules
+DMBS_LUFA_PATH ?= $(LUFA_PATH)/Build/LUFA
+include $(DMBS_LUFA_PATH)/lufa-sources.mk
+include $(DMBS_LUFA_PATH)/lufa-gcc.mk
+
+# Include common DMBS build system modules
+DMBS_PATH      ?= $(LUFA_PATH)/Build/DMBS/DMBS
+include $(DMBS_PATH)/core.mk
+include $(DMBS_PATH)/cppcheck.mk
+include $(DMBS_PATH)/doxygen.mk
+include $(DMBS_PATH)/dfu.mk
+include $(DMBS_PATH)/gcc.mk
+include $(DMBS_PATH)/hid.mk
+include $(DMBS_PATH)/avrdude.mk
+include $(DMBS_PATH)/atprogram.mk
