@@ -19,23 +19,27 @@ int main(void){
 	CDC_Device_CreateStream(&CDC_If, &serial);
 	GlobalInterruptEnable();
 
+	// Wait for serial
+	//fprintf(display, "Waiting for serial connection...\n");
 	while(!serialReady){
 		CDC_Device_USBTask(&CDC_If);
 	}
-	LEDs_TurnOnLEDs(LEDS_LED1);
+	
+	// Start program
+	//fprintf(display, "Connected! Starting program.\n");
+	fprintf(&serial, "Connected! Starting program.\n");
+	CDC_Device_Flush(&CDC_If);
 
 	for (;;){
-		fprintf(&serial, "TEST %d\n", serialReady);
+		LEDs_TurnOnLEDs(LEDS_LED1);
+		fprintf(&serial, "On\n");
 		CDC_Device_Flush(&CDC_If);
+		_delay_ms(1000);
 
-		//LEDs_TurnOnLEDs(LEDS_LED1);
-		//fprintf(&serial, "On %d\n", PORTB&LEDS_LED1);
-		//CDC_Device_Flush(&VirtualSerial_CDC_Interface);
-		//_delay_ms(1000);
-		//LEDs_TurnOffLEDs(LEDS_LED1);
-		//fprintf(&serial, "Off %d\n", PORTB&LEDS_LED1);
-		//CDC_Device_Flush(&VirtualSerial_CDC_Interface);
-		//_delay_ms(1000);
+		LEDs_TurnOffLEDs(LEDS_LED1);
+		fprintf(&serial, "Off\n");
+		CDC_Device_Flush(&CDC_If);
+		_delay_ms(1000);
 	}
 }
 
