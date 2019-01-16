@@ -11,6 +11,7 @@
 #include <Descriptors.h>
 #include <thrust.h>
 #include <usb.h>
+#include <hx711.h>
 
 static FILE serial;
 
