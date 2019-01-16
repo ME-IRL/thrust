@@ -1,0 +1,1 @@
+SUBSYSTEM=="tty", ATTRS{idVendor}=="5250", ATTRS{idProduct}=="0001", SYMLINK+="gndctrl", MODE="0666"
