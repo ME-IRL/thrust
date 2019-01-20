@@ -18,7 +18,6 @@ LD_FLAGS     =
 
 AVRDUDE_PROGRAMMER = avrisp
 AVRDUDE_PORT = /dev/arduino0
-AVRDUDE_PORT = /dev/ttyACM0
 AVRDUDE_FLAGS = -b 19200
 
 # Default target

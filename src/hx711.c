@@ -4,7 +4,7 @@
 #include <hx711.h>
 
 uint8_t GAIN;
-double OFFSET;
+uint32_t OFFSET;
 static uint8_t pulses;
 
 void hx711_init(uint8_t gain){
@@ -18,35 +18,23 @@ void hx711_init(uint8_t gain){
 }
 
 uint32_t hx711_read(void){
-	while(!hx711_isReady());
-
-	unsigned long count;
 
 	HX711_DATA1;
-	_delay_us(1);
-	HX711_CLK0;
-	_delay_us(1);
-
-	count = 0;
 	while(!hx711_isReady());
 
+	uint32_t count = 0;
 	for(uint8_t i = 0; i < pulses; i++){
 		HX711_CLK1;
 		_delay_us(1);
+
 		HX711_CLK0;
 		_delay_us(1);
-		count = count << 1;
 
-		if(!hx711_isReady()) count++;
+		if(HX711_DATAD) count++;
+		count = count << 1;
 	}
 
-	count = count >> 6;
-
-	HX711_CLK1;
-	_delay_us(1);
-	HX711_CLK0;
-	_delay_us(1);
-
+	count = count >> (pulses - 24);
 	count ^= 0x800000;
 
 	return count;
@@ -64,7 +52,7 @@ uint32_t hx711_readAvg(uint8_t times){
 	return sum/times;
 }
 
-double hx711_getVal(uint8_t times){
+uint32_t hx711_getVal(uint8_t times){
 	return hx711_readAvg(times) - OFFSET;
 }
 
@@ -86,11 +74,11 @@ uint8_t hx711_getGain(void){
 	return GAIN;
 }
 
-void hx711_setOffset(double offset){
+void hx711_setOffset(uint32_t offset){
 	OFFSET = offset;
 }
 
-double hx711_getOffset(void){
+uint32_t hx711_getOffset(void){
 	return OFFSET;
 }
 
